@@ -6,11 +6,9 @@ from torchvision.models.detection.anchor_utils import AnchorGenerator
 from torchvision.models.detection.transform import GeneralizedRCNNTransform
 
 import vit
+from references import utils
 
-
-MODEL_PATH = "./fasterrcnn-11-13.pth"
-
-def get_model():
+def get_model(args):
 
     # init backbone
     backbone = vit.__dict__['vit_base_patch16'](
@@ -49,8 +47,12 @@ def get_model():
         fixed_size=(512, 512),
     )
 
-    checkpoint = torch.load(MODEL_PATH, map_location="cpu")
-    msg = model.load_state_dict(checkpoint["model"])
-    print(msg)
+    # load backbone pretrained checkpoint 
+    if args.checkpoint_type == 'pretrained':
+        checkpoint = torch.load(args.checkpoint_path, map_location='cpu')
+        print(f'Load {args.checkpoint_type} checkpoint from: {args.checkpoint_path}')
+        checkpoint_model = checkpoint['model']
+        utils.interpolate_pos_embed(model.backbone.backbone, checkpoint_model)
+        msg = model.backbone.backbone.load_state_dict(checkpoint_model, strict=False)
 
     return model

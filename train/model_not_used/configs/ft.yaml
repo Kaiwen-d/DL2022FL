@@ -1,14 +1,9 @@
-# data
 seed: 42
 warmup_iter: 8000
 use_jitter: false
-
-# optim
 lr: 0.0001
 optim_mode: freeze
 scheduler_gamma: 0.1
-scheduler_step_size: 6  # slightly modified
-
-# training
+scheduler_step_size: 6
 export_bound: 15
 train_print_freq: 50
